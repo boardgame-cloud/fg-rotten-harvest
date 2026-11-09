@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Rotten Harvest – Complete Rules</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8E0C6; --panel:#F2ECD8; --ink:#2A1A2E; --muted:#66555F; --rule:#B7A77C;
+  --rust:#8E2A1E; --stalk:#56642A; --warn-bg:#EBD9B4;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1C1420; --panel:#261B2B; --ink:#E6DCBD; --muted:#A99A90; --rule:#4C3B47;
+    --rust:#E88B4E; --stalk:#AEBE6E; --warn-bg:#33232A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1C1420; --panel:#261B2B; --ink:#E6DCBD; --muted:#A99A90; --rule:#4C3B47;
+  --rust:#E88B4E; --stalk:#AEBE6E; --warn-bg:#33232A; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 7rem)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:17px/1.55 "Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3{font-family:"IM Fell English",Georgia,"Times New Roman",serif;font-weight:400;line-height:1.15;margin:0}
+a{color:var(--rust)}
+:focus-visible{outline:3px solid var(--stalk);outline-offset:2px}
+
+header.hero{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 1.5rem}
+.hero h1{font-size:clamp(2.6rem,10vw,4.2rem);letter-spacing:-.01em}
+.hero p.sub{font-family:"IM Fell English",Georgia,serif;font-style:italic;font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.6rem}
+
+/* the memorable element: the madness track */
+.track{display:grid;grid-template-columns:repeat(4,1fr) 1.25fr;gap:.35rem;margin:0 0 .5rem}
+.track div{border:1.5px solid var(--ink);padding:.55rem .3rem;text-align:center;font-family:"IM Fell English",Georgia,serif;font-size:1.15rem;background:var(--panel)}
+.track div small{display:block;font-family:"Source Sans 3",sans-serif;font-size:.72rem;color:var(--muted);margin-top:.1rem}
+.track .l1{border-color:var(--stalk)}
+.track .l2{border-color:var(--rust);border-style:dashed}
+.track .l3{border-color:var(--rust);border-width:3px}
+.track .skull{background:var(--rust);color:var(--bg);border-color:var(--rust)}
+.track .skull small{color:var(--bg);opacity:.85}
+.track-cap{font-size:.92rem;color:var(--muted);margin:0}
+
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+nav.bar .inner{max-width:46rem;margin:0 auto;padding:.6rem 1.25rem .5rem}
+.search{width:100%;font:inherit;padding:.5rem .7rem;border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:2px}
+.jumps{display:flex;gap:1rem;overflow-x:auto;padding:.5rem 0 .1rem;font-size:.95rem;white-space:nowrap}
+.jumps a{text-decoration:none;color:var(--ink);border-bottom:2px solid transparent}
+.jumps a:hover{border-bottom-color:var(--rust)}
+
+main{max-width:46rem;margin:0 auto;padding:1rem 1.25rem 4rem}
+section{margin-top:2.5rem}
+section > h2{font-size:2rem;padding-bottom:.35rem;border-bottom:2px solid var(--ink);margin-bottom:1rem}
+section > p.lede{color:var(--muted);margin:.2rem 0 1rem}
+.rule{padding:.85rem 0;border-bottom:1px solid var(--rule)}
+.rule h3{font-size:1.35rem;margin-bottom:.35rem}
+.rule p{margin:.35rem 0}
+.rule ul,.rule ol{margin:.35rem 0;padding-left:1.25rem}
+.rule li{margin:.2rem 0}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:.05rem .45rem;border-radius:2px;margin-right:.35rem;vertical-align:.12em}
+.tag.core{border:1px solid var(--muted);color:var(--muted)}
+.tag.killer{background:var(--rust);color:var(--bg)}
+.tag.loc{background:var(--stalk);color:var(--bg)}
+.check{background:var(--warn-bg);border-left:3px solid var(--rust);padding:.4rem .65rem;font-size:.92rem;margin:.5rem 0}
+
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+ol.steps > li{counter-increment:s;position:relative;padding:.75rem 0 .75rem 2.6rem;border-bottom:1px solid var(--rule)}
+ol.steps > li::before{content:counter(s);position:absolute;left:0;top:.6rem;font-family:"IM Fell English",Georgia,serif;font-size:1.6rem;color:var(--rust);width:2rem;text-align:right}
+ol.steps h3{font-size:1.2rem;margin-bottom:.2rem}
+
+.phase{display:grid;grid-template-columns:2.6rem 1fr;gap:.2rem .6rem}
+.phase .n{font-family:"IM Fell English",Georgia,serif;font-size:1.9rem;color:var(--rust);text-align:right;line-height:1}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+.tw{overflow-x:auto;margin:.5rem 0}
+th,td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:700}
+.hidden{display:none !important}
+.empty{color:var(--muted);font-style:italic;display:none}
+
+/* tabs */
+.tabs{display:flex;gap:.4rem;margin-bottom:.55rem}
+.tabs button{flex:1;font:600 1rem "Source Sans 3",sans-serif;padding:.5rem;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+[hidden]{display:none !important}
+
+/* tracker */
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.5rem;margin:1rem 0}
+.ctr{border:1.5px solid var(--rule);background:var(--panel);padding:.5rem .6rem}
+.ctr .lbl{font-size:.85rem;color:var(--muted)}
+.ctr .row{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-top:.15rem}
+.ctr .val{font-family:"IM Fell English",Georgia,serif;font-size:1.8rem;line-height:1}
+.ctr button{width:2.4rem;height:2.4rem;font:700 1.2rem "Source Sans 3",sans-serif;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer}
+.ctr.mad .val{color:var(--rust)}
+.toggles{display:grid;gap:.4rem;margin:.5rem 0 1rem}
+.tgl{display:flex;gap:.6rem;align-items:center;padding:.55rem .7rem;border:1.5px solid var(--rust);background:var(--warn-bg);cursor:pointer}
+.tgl input{width:1.3rem;height:1.3rem;accent-color:var(--rust)}
+.msg{min-height:1.4rem;font-weight:600;color:var(--rust);margin:.2rem 0 .6rem}
+.roundbar{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}
+.roundbar button{font:600 1rem "Source Sans 3",sans-serif;padding:.6rem 1rem;border:1.5px solid var(--ink);border-radius:2px;cursor:pointer;background:var(--ink);color:var(--bg)}
+.roundbar button.ghost{background:transparent;color:var(--ink)}
+.ph{margin-top:1.8rem}
+.ph h2{font-size:1.75rem;display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:.3rem}
+.ph h2 .prog{font:600 .95rem "Source Sans 3",sans-serif;color:var(--muted)}
+.ph h3{font-size:1.2rem;margin:1rem 0 .2rem;color:var(--stalk)}
+.step{display:grid;grid-template-columns:1.6rem 1fr;gap:.55rem;padding:.6rem 0;border-bottom:1px solid var(--rule);cursor:pointer}
+.step input{width:1.3rem;height:1.3rem;margin-top:.15rem;accent-color:var(--stalk)}
+.step.done span{opacity:.45;text-decoration:line-through;text-decoration-thickness:1px}
+.cond{color:var(--rust);font-weight:700}
+.step.sub{padding-left:1.4rem}
+.badge{display:inline-block;font-size:.8rem;font-weight:700;padding:.05rem .45rem;border-radius:2px;margin-left:.3rem}
+.badge.on{background:var(--rust);color:var(--bg)}
+.badge.off{border:1px solid var(--muted);color:var(--muted)}
+.anytime{border:1.5px dashed var(--rust);padding:.4rem .9rem;margin-top:2rem}
+.anytime h2{font-size:1.5rem;margin:.4rem 0}
+.anytime p{margin:.45rem 0}
+footer{max-width:46rem;margin:0 auto;padding:0 1.25rem 3rem;color:var(--muted);font-size:.9rem}
+@media (max-width:420px){
+  .track{grid-template-columns:repeat(5,1fr)}
+  .track div{font-size:1rem;padding:.45rem .15rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>A Rotten Harvest</h1>
+  <p class="sub">Grimlash at Shady Acres, with every Core Box rule you need to set up and play.</p>
+  <div class="track" aria-label="Harvest Madness track">
+    <div>Start<small>no card</small></div>
+    <div class="l1">I<small>level 1</small></div>
+    <div class="l2">II<small>level 2</small></div>
+    <div class="l3">III<small>level 3</small></div>
+    <div class="skull">☠<small>you lose</small></div>
+  </div>
+  <p class="track-cap">Harvest Madness: each new level gives you a power. Going past level 3 ends the game on the spot.</p>
+</header>
+
+<nav class="bar">
+  <div class="inner">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabRules" aria-selected="true">Rules</button>
+      <button role="tab" id="tabTracker" aria-selected="false">Round tracker</button>
+    </div>
+    <div id="rulesNav">
+    <input class="search" id="q" type="search" placeholder="Search rules (e.g. abduct, heart, reaction)" aria-label="Search rules">
+    <div class="jumps">
+      <a href="#setup">Setup</a>
+      <a href="#turn">Turn</a>
+      <a href="#madness">Harvest Madness</a>
+      <a href="#grimlash">Grimlash</a>
+      <a href="#acres">Shady Acres</a>
+      <a href="#panic">Panic &amp; reset</a>
+      <a href="#core">Core rules</a>
+      <a href="#quick">Quick reference</a>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<main id="rulesView">
+<p class="empty" id="empty">No rule matches that search. Try a shorter word.</p>
+
+<!-- SETUP -->
+<section id="setup">
+  <h2>Setup</h2>
+  <p class="lede">Core Box steps with the Grimlash and Shady Acres additions folded in, in table order.</p>
+  <ol class="steps">
+    <li class="rule"><h3>Open both halves of the box</h3>
+      <p>Pop off the Grimlash cover (its reverse is the Killer board) and the Shady Acres cover (Location board). Pull out both component trays.</p></li>
+    <li class="rule"><h3>Pick your Final Girl</h3>
+      <p>Choose or draw a Final Girl card. This box adds <b>Vicky</b> and <b>Joy</b>; any Final Girl you own works. Move new Final Girl cards into the Core Box for storage.</p></li>
+    <li class="rule"><h3>Player board</h3>
+      <p>Place the Player board, normal side up (Extreme Horror Mode is the harsher back side: tougher Horror track and only 5 Time). Put your Final Girl card beneath it, Victim Saved side showing. Set the Time marker on 6.</p></li>
+    <li class="rule"><h3>Dice and Action cards</h3>
+      <p>Put the six dice aside. Pull the six Zero Cost Action cards (gold hourglass showing 0): that is your starting hand. Sort the rest by name into piles in two rows. This is the Action Tableau.</p></li>
+    <li class="rule"><h3>Supplies</h3>
+      <p>Set aside Victim meeples, Special Victim meeples, the three Victim Overflow boards with their tokens, Health markers, Tracking markers and the Bloodlust marker.</p></li>
+    <li class="rule"><h3>Lay out the boards</h3>
+      <p>Grimlash’s board goes above the Player board; Shady Acres goes directly to its right. Bloodlust marker on the bottom of Grimlash’s Bloodlust track.</p></li>
+    <li class="rule"><h3>Finale and Dark Power <span class="tag killer">Grimlash</span></h3>
+      <p>Shuffle Grimlash’s Finale cards (upper-body backs) and place one facedown on the board. Shuffle his Dark Power cards (lower-body backs) and place one facedown below it. Return the rest to the tray.</p>
+      <p>The Epic Finale and Epic Dark Power (bloody borders) are only for when you want a brutal game. Leave them out otherwise.</p></li>
+    <li class="rule"><h3>Terror deck</h3>
+      <p>Shuffle Grimlash’s and Shady Acres’ Terror cards together and deal <b>10</b> facedown. That is the Terror deck; set the leftovers aside unseen.</p></li>
+    <li class="rule"><h3>Item decks <span class="tag loc">Shady Acres</span></h3>
+      <p>Shuffle the Shady Acres Item cards and deal three facedown piles of four above the board, one per Search space (Ralph’s Garage, the Old Barn, the McCoy Farmhouse). Flip the top card of each pile faceup. Return the extra Items to the tray.</p></li>
+    <li class="rule"><h3>Setup card <span class="tag loc">Shady Acres</span></h3>
+      <p>Draw one of the five Setup cards and place the Final Girl, Grimlash and yellow Victims as shown. Shady Acres setups use <b>14 Victims</b> rather than the usual 12. Keep the Setup card visible above the board.</p></li>
+    <li class="rule"><h3>Final Health tokens</h3>
+      <p>Mix the nine black Final Health tokens facedown. Without looking, put one on Grimlash’s board and one on your Player board. Return the others unseen.</p></li>
+    <li class="rule"><h3>Health and Horror</h3>
+      <p>Grimlash has <b>10</b> health: his black token plus 9 Health markers. Your Final Girl gets health equal to her card, counting her black token. Grimlash’s starting Horror is <b>4</b>: set your Horror marker there.</p></li>
+    <li class="rule"><h3>Harvest Madness <span class="tag killer">Grimlash</span></h3>
+      <p>Place the Harvest Madness marker at the start of its track. Sort the 15 Harvest Madness cards into separate shuffled decks for levels 1, 2 and 3.</p>
+      <div class="check">The exact start space and where the track sits: check Grimlash’s rules sheet.</div></li>
+    <li class="rule"><h3>Children and Curses <span class="tag loc">Shady Acres</span></h3>
+      <p>Put the Children card beside the board. Place <b>one Child</b> on the Altar of the Old Gods (northeast corner); keep the other two in the supply. Shuffle the 8 Ancient Curse cards facedown nearby.</p></li>
+    <li class="rule"><h3>First Event</h3>
+      <p>Shuffle the 10 Shady Acres Event cards facedown and reveal the top one. Apply it, then start turn one.</p></li>
+  </ol>
+</section>
+
+<!-- TURN -->
+<section id="turn">
+  <h2>The turn</h2>
+  <p class="lede">Five phases, in order. Rotten Harvest steps are marked.</p>
+
+  <div class="rule phase"><div class="n">1</div><div>
+    <h3>Action phase</h3>
+    <p>Play Action cards one at a time: move, search, rest, attack and so on. Most require a Horror Roll. Stop when you choose, run out of cards, a card ends the phase, or Time drops below zero.</p>
+    <p>Any time before the phase ends, discard Action cards for +1 Time each.</p></div></div>
+
+  <div class="rule phase"><div class="n">2</div><div>
+    <h3>Planning phase</h3>
+    <ol>
+      <li>Spend remaining Time to buy cards from the Tableau (cost in the card’s lower right). No buying cards played or discarded since the last Planning phase, no going below zero Time, hand limit 10.</li>
+      <li>Reset Time to 6. Unspent Time is lost.</li>
+      <li>Return all cards played or discarded this turn to their Tableau piles.</li>
+    </ol>
+    <p>Zero Cost cards in the Tableau can always be taken, even at zero Time, as long as you stay at 10 cards or fewer.</p></div></div>
+
+  <div class="rule phase"><div class="n">3</div><div>
+    <h3>Killer phase</h3>
+    <ol>
+      <li><span class="tag loc">Shady Acres</span><b>Children act first.</b> Each Child resolves fully before the next, starting with the one nearest the Altar. See <a href="#acres">Children</a>.</li>
+      <li><span class="tag killer">Grimlash</span><b>Killer Action</b> from the Finale card. Before the Finale: target the closest Victim or Final Girl, move 1 space, attack. If that attack killed a Victim, +1 Harvest Madness.</li>
+      <li><b>Draw a Terror card</b> and resolve it top to bottom (skip once the Finale is revealed).</li>
+    </ol></div></div>
+
+  <div class="rule phase"><div class="n">4</div><div>
+    <h3>Panic phase</h3>
+    <p>Only happens if a Victim died this round. Victims in Grimlash’s space roll a die each and may scatter along the numbered paths. Full walkthrough in <a href="#panic">Panic and end-of-round reset</a>.</p></div></div>
+
+  <div class="rule phase"><div class="n">5</div><div>
+    <h3>Upkeep phase</h3>
+    <ol>
+      <li><b>Finale check.</b> If the Terror deck is empty, reveal the Finale (and the Dark Power, if still facedown).</li>
+      <li><span class="tag loc">Shady Acres</span>Place a new Child on the Altar if one is left in the supply.</li>
+      <li>Resolve any upkeep from Events, Items, Curses or Dark Powers (for example Rite of the Corrupted).</li>
+      <li>Rearrange items between your hands and backpack if you want.</li>
+    </ol></div></div>
+</section>
+
+<!-- MADNESS -->
+<section id="madness">
+  <h2>Harvest Madness</h2>
+  <p class="lede">Grimlash’s signature system. It makes you stronger until it kills you.</p>
+  <div class="rule"><h3>Rising</h3>
+    <p>Madness goes up when Grimlash’s Killer Action kills a Victim, and through many Grimlash Terror cards, Minor Dark Powers, Dark Powers and some Bloodlust spaces.</p>
+    <p>Only a Victim killed by the Grimlash attack just resolved raises it through his Killer Action; Children sacrifices don’t (designer ruling).</p></div>
+  <div class="rule"><h3>New level, new power</h3>
+    <p>Each time the marker reaches a new level, draw 2 cards from that level’s Harvest Madness deck and keep 1. Higher levels give stronger powers.</p></div>
+  <div class="rule"><h3>Lowering it</h3>
+    <p>Whenever you gain hearts (healing), you may instead lower Harvest Madness. It is one or the other for that whole effect: you can’t split one heal between health and Madness.</p>
+    <p>Dropping below a level discards that level’s card. Climbing back up draws a fresh one.</p></div>
+  <div class="rule"><h3>Past level 3</h3>
+    <p>If Harvest Madness would go beyond level 3 onto the skull, you lose immediately. Your Final Health token doesn’t save you.</p></div>
+</section>
+
+<!-- GRIMLASH -->
+<section id="grimlash">
+  <h2>Grimlash</h2>
+  <p class="lede">An old harvest god woken by sacrifice. Slow but relentless.</p>
+  <div class="rule"><h3>Stats <span class="tag killer">Grimlash</span></h3>
+    <ul>
+      <li>Health 10. Starting Horror 4.</li>
+      <li>Pre-Finale Killer Action: target closest Victim or Final Girl, move 1, attack, +1 Madness if a Victim died.</li>
+      <li>Bloodlust raises his speed and damage and triggers extra Madness at certain spaces. Read the row each time it climbs.</li>
+    </ul>
+    <p>Only Terror cards move him far before the Finale, so his position is fairly predictable. Use that.</p></div>
+  <div class="rule"><h3>Dark Powers <span class="tag killer">Grimlash</span></h3>
+    <p>All tie into Harvest Madness. Revealed when Bloodlust reaches the marked space.</p>
+    <ul>
+      <li><b>Rite of the Corrupted:</b> if Madness didn’t rise during the turn, it rises at the end of the turn anyway.</li>
+      <li><b>Rite of the Old One:</b> every time Madness reaches a new level, discard a Terror card, pulling the Finale closer.</li>
+    </ul>
+    <div class="check">The third Dark Power and the Epic Dark Power aren’t summarized here; read the card when revealed.</div></div>
+  <div class="rule"><h3>Finales <span class="tag killer">Grimlash</span></h3>
+    <p>After the Finale he stops crawling one space at a time.</p>
+    <ul>
+      <li><b>Withered Harbinger:</b> charges at you and attacks twice; you lose Time for spaces he moves through.</li>
+      <li><b>Ancient Abomination:</b> his attacks on you hit harder.</li>
+    </ul></div>
+  <div class="rule"><h3>Minor Dark Powers <span class="tag killer">Grimlash</span></h3>
+    <p>Drawn from the Terror deck, placed above his board with their own Health markers. Your damage strips those markers first; clearing one discards it.</p>
+    <ul>
+      <li><b>Flaming Eyes:</b> keeps pushing your Madness up. Kill it early.</li>
+      <li><b>Burning Sickle:</b> kills Victims and hits you in the same strike.</li>
+    </ul></div>
+  <div class="rule"><h3>Terror cards <span class="tag killer">Grimlash</span></h3>
+    <p>Many raise Madness, punish you for being at a certain level, or simply add Horror. Keep Horror under control; you rarely keep an extra die for long.</p></div>
+</section>
+
+<!-- SHADY ACRES -->
+<section id="acres">
+  <h2>Shady Acres</h2>
+  <p class="lede">Dirt roads, corn rows and an altar to something old.</p>
+  <div class="rule"><h3>The map <span class="tag loc">Shady Acres</span></h3>
+    <p>A road runs from the bottom right to the top left, with corn field and pasture spaces off it. All three Search spaces sit off the main route: reaching Ralph’s Garage from the road takes a detour, and the McCoy Farmhouse connects only through the top-left exit space (then the Cow Pasture and a corn field). Plan routes before you commit Time.</p>
+    <p>The <b>Altar of the Old Gods</b> is in the northeast.</p></div>
+  <div class="rule"><h3>Children <span class="tag loc">Shady Acres</span></h3>
+    <ul>
+      <li>Children are <b>Enemies</b>, not Minions. They and Grimlash never attack each other.</li>
+      <li>One starts on the Altar; one more arrives there each Upkeep, up to the 3 meeples.</li>
+      <li>In the Killer phase, before Grimlash, each Child: <b>targets</b> the closest Victim or Final Girl, <b>moves 1</b>, then tries to <b>abduct</b>.</li>
+      <li>Resolve one Child completely before the next, starting nearest the Altar.</li>
+      <li><b>Abduct:</b> roll a die. On 1 or 2, the Child and one Victim go to the Altar and the Victim is sacrificed: Bloodlust rises as normal, and the Victim goes on top of the Ancient Curse deck. One attempt per Child, however many Victims share its space.</li>
+      <li>You may kill Children, but they come back. You don’t need to defeat them to win.</li>
+    </ul>
+    <div class="check">Child health, what a Child does when it reaches you, and how killed Children return: check the Children card.</div></div>
+  <div class="rule"><h3>Ancient Curses <span class="tag loc">Shady Acres</span></h3>
+    <p>When the third sacrificed Victim lands on the Curse deck, draw an Ancient Curse. Curses stay for the rest of the game: faster Victim deaths, faster Children, Time loss in corn fields and similar. The Cornhusk Effigy (and a few other effects) can remove one.</p>
+    <p>The 8 Curses: Chthonic Possession, Dark Fields, Decaying Earth, Gnarled Stalks, Malevolent Aura, Omen of Blood, Omen of Death, Omen of Plague.</p></div>
+  <div class="rule"><h3>Items worth knowing <span class="tag loc">Shady Acres</span></h3>
+    <p>Five of the Items are weapons, which is a lot for one location.</p>
+    <ul>
+      <li><b>Pilgrim’s Musket:</b> ranged, but not while next to a corn field.</li>
+      <li><b>Scythe:</b> in a corn field, split damage across Enemies there and clear the space so it is no longer a corn field.</li>
+      <li><b>Cowboy Boots:</b> twice, move 2 spaces without playing an Action card.</li>
+      <li><b>Combine Keys:</b> harvest the big corn fields and add 1 space to Walk (not Sprint).</li>
+      <li><b>Children’s Toys:</b> helps against the Children.</li>
+      <li><b>Cornhusk Effigy:</b> remove an Ancient Curse.</li>
+    </ul></div>
+  <div class="rule"><h3>Special Victims (Events) <span class="tag loc">Shady Acres</span></h3>
+    <ul>
+      <li><b>Sally McCoy:</b> passive on the board; saving her gives the Combine Keys, or Time if you already have them.</li>
+      <li><b>Ralph the Mechanic:</b> saving him adds a use to your limited-use Items. No penalty if he dies.</li>
+      <li><b>Harvest Cultist:</b> walks toward you, then drags you both toward Grimlash while with you. Save him fast for Horror reduction. No penalty if he dies.</li>
+    </ul>
+    <p>Other Events: Acres of Hatred, Festering Rot, It Hungers for Us, It Lurks Between the Rows, “The fields are moving...” and more.</p></div>
+  <div class="rule"><h3>Shady Acres Terror cards <span class="tag loc">Shady Acres</span></h3>
+    <p>Several move or activate the Children on their own, and some add new Victims. <b>Nobody Knows Where They Take Them</b> sacrifices without a die roll.</p></div>
+  <div class="rule"><h3>Vicky and Joy</h3>
+    <p>Both give Time for saving Victims and an extra 1-space move. Vicky also gives hearts and unlocks her Ultimate at 5 saves (a situational movement boost that costs Time). Joy gives Horror reduction and unlocks at 6 saves: once per turn, ignore one hit or heart loss.</p>
+    <p>Joy’s Horror relief pairs well with Grimlash; Vicky’s hearts give you more chances to push Madness down.</p></div>
+</section>
+
+<!-- PANIC & RESET -->
+<section id="panic">
+  <h2>Panic and end-of-round reset</h2>
+  <p class="lede">What happens after the Killer phase, and what carries over into the next round.</p>
+  <div class="rule"><h3>Does panic happen this round? <span class="tag core">Core</span></h3>
+    <p>Panic needs <b>both</b> of these:</p>
+    <ul>
+      <li>At least one Victim was killed this round. Where, how and by whom doesn’t matter: Grimlash’s attack, a Terror card, an Event, or a Children sacrifice all count.</li>
+      <li>The Victim is in the same space as Grimlash.</li>
+    </ul>
+    <p>No deaths this round means no panic at all, even if Victims are standing next to him. Victims elsewhere on the board never panic in this phase. You, the Final Girl, don’t panic in the Panic phase.</p></div>
+  <div class="rule"><h3>Panic numbers on the board <span class="tag core">Core</span></h3>
+    <p>Each line connecting two spaces has panic numbers at <b>both ends</b>: one set on each space’s side of the line.</p>
+    <p><b>Use the numbers in the space the Victim is standing in</b> (the end of the line nearest its current space). The set at the other end belongs to the neighbouring space and is only used when a Victim panics out of <i>that</i> space.</p></div>
+  <div class="rule"><h3>How to resolve panic <span class="tag core">Core</span></h3>
+    <ol>
+      <li>Pick one panicking Victim (you choose the order).</li>
+      <li>Roll 1 die for that Victim.</li>
+      <li>Look only at the numbers printed in the Victim’s current space, at its end of each line. Find the rolled number and move the Victim one space along that line.</li>
+      <li>If no path out of the space shows that number, the Victim stays where it is.</li>
+      <li>Repeat for each Victim in Grimlash’s space, one die each.</li>
+    </ol>
+    <p>Each Victim moves at most one space. Panicked Victims can run into danger, including another Enemy’s space, and one that lands on an Exit is <b>not</b> saved: only you can save Victims, during your Action phase.</p>
+    <p>Victims on a Victim Overflow board for Grimlash’s space count as being in that space and panic too.</p></div>
+  <div class="rule"><h3>Panic from cards <span class="tag core">Core</span></h3>
+    <p>Some Terror cards, Events or other effects make Victims panic at other times, sometimes even you. Resolve it exactly the same way: roll, check the paths out of that space, move one space or stay.</p></div>
+  <div class="rule"><h3>Children and panic <span class="tag loc">Shady Acres</span></h3>
+    <p>With Minions, Victims sharing a Minion’s space also panic. The Children are Enemies but not Minions, so this doesn’t automatically apply to them.</p>
+    <div class="check">Whether Victims in a Child’s space panic: check the Children card and the Shady Acres sheet.</div></div>
+  <div class="rule"><h3>What resets each round <span class="tag core">Core</span></h3>
+    <ul>
+      <li><b>Time</b> goes back to 6 in the Planning phase, after you finish buying. Unspent Time is lost.</li>
+      <li><b>Played and discarded Action cards</b> go back to their Tableau piles at the <b>end of Planning</b>, after buying. That’s why you can’t rebuy a card you just used.</li>
+      <li>Cards you play outside the Action phase (Reaction cards in the Killer phase, for example) wait in the discard pile until the end of the <b>next</b> Planning phase.</li>
+      <li>The “did a Victim die this round” check for panic, and the “did Madness rise this round” check for Rite of the Corrupted, start fresh.</li>
+    </ul></div>
+  <div class="rule"><h3>What carries over <span class="tag core">Core</span></h3>
+    <ul>
+      <li><b>Your hand.</b> Unplayed cards stay with you. There’s no automatic draw: you only get new cards by buying in Planning, taking Zero Cost cards, or rewards.</li>
+      <li>Health, Horror, Bloodlust, Items and where everyone stands.</li>
+      <li>Minor Dark Powers, until their health is cleared.</li>
+      <li>Ongoing Events, unless the card says when to discard it.</li>
+      <li><span class="tag killer">Grimlash</span>Harvest Madness level and its cards.</li>
+      <li><span class="tag loc">Shady Acres</span>Children on the board, the sacrifice count toward the next Curse, and every Curse drawn.</li>
+    </ul></div>
+  <div class="rule"><h3>Upkeep cleanup <span class="tag core">Core</span></h3>
+    <p>Upkeep is the last chance to tidy before the next round: Finale check, new Child on the Altar, end-of-round card effects, then rearrange Items between hands and backpack. That rearrange is the only free one; otherwise you can only rearrange when you gain an Item.</p></div>
+</section>
+
+<!-- CORE -->
+<section id="core">
+  <h2>Core rules</h2>
+  <p class="lede">The Core Box rules that apply to every Feature Film.</p>
+  <div class="rule"><h3>Winning and losing <span class="tag core">Core</span></h3>
+    <p>Kill Grimlash and you win. Die and you lose. If both happen at once, you still win. At Shady Acres you also lose instantly if Harvest Madness passes level 3. Saving Victims is optional, but it fuels rewards and your Ultimate Ability.</p></div>
+  <div class="rule"><h3>Horror Rolls <span class="tag core">Core</span></h3>
+    <ul>
+      <li>Roll dice equal to your Horror Level (always at least 1).</li>
+      <li>5–6 is a success. 3–4 is a partial: discard 2 Action cards to turn it into a success, once per die.</li>
+      <li>No successes means failure. Resolve the card’s line for 2+ successes, 1 success or failure, left to right.</li>
+      <li>More than 6 dice: note results and re-roll to cover the extra.</li>
+    </ul></div>
+  <div class="rule"><h3>Horror track ends <span class="tag core">Core</span></h3>
+    <p>Lowering Horror past the bottom gives +1 Time instead. Raising it past the top raises Bloodlust instead.</p></div>
+  <div class="rule"><h3>Time <span class="tag core">Core</span></h3>
+    <p>Once Time drops below zero, the Action phase ends after the current action and nothing can bring it back up. Sitting on exactly zero is fine.</p></div>
+  <div class="rule"><h3>Movement and Victims <span class="tag core">Core</span></h3>
+    <p>Move only along connecting lines. Leaving a space, up to 2 Victims may come with you, but never into the Killer’s space. Victims already in the Killer’s space will follow you out.</p></div>
+  <div class="rule"><h3>Saving Victims <span class="tag core">Core</span></h3>
+    <p>Whenever you are on a green Exit space during the Action phase, even passing through, you may save Victims there. Put them on your Final Girl card and take the rewards they cover. Fill the card to flip it and unlock the Ultimate Ability; later saves give the reward under it. Victims alone on an Exit aren’t saved.</p></div>
+  <div class="rule"><h3>Searching <span class="tag core">Core</span></h3>
+    <p>Play a Search card on an orange Search space. Draw from that space’s Item deck per the card, keep one, and return the rest on top faceup or bottom facedown. Never flip a facedown top card. An empty deck has nothing left to find.</p></div>
+  <div class="rule"><h3>Items and weapons <span class="tag core">Core</span></h3>
+    <ul>
+      <li>Two hands; a two-handed item fills both. The backpack holds anything, but hand items there can’t be used.</li>
+      <li>Rearrange only when you gain an item or in Upkeep.</li>
+      <li>Weapon range is exact: 0 means same space; 1+ means exactly that far from the Killer.</li>
+      <li>If an attack card deals 1+ damage, add one weapon’s modifier. Only one weapon per attack.</li>
+      <li>Limited-use items get Tracking markers; discard at zero.</li>
+    </ul></div>
+  <div class="rule"><h3>Resting <span class="tag core">Core</span></h3>
+    <p>Recover 1 health per heart, never above starting health. At Shady Acres, any heart effect can be spent on Madness instead.</p></div>
+  <div class="rule"><h3>Killer targeting and movement <span class="tag core">Core</span></h3>
+    <ul>
+      <li>Target the closest valid option. Ties go to the group with the most Victims.</li>
+      <li>Moves follow the shortest path up to his Movement Value per move icon, stopping on reaching the target.</li>
+      <li>Each attack icon is one attack at his Attack Value. Victims in his space are attacked before you unless you are the named target.</li>
+      <li>If he can’t reach his target but ends with someone else, he attacks them anyway.</li>
+    </ul></div>
+  <div class="rule"><h3>Victims dying and Bloodlust <span class="tag core">Core</span></h3>
+    <p>Victims have 1 health. Each death goes to the Dead space and raises Bloodlust by 1, applying that row’s effect. At max, each further rise triggers the final effect. Extra damage on a Victim is wasted.</p></div>
+  <div class="rule"><h3>Reaction cards <span class="tag core">Core</span></h3>
+    <p>Blue Reaction cards are played only against an attack on you. One card per attack, but you may stack several on the same attack. They can’t protect Victims or stop unpreventable health loss.</p></div>
+  <div class="rule"><h3>Final Health tokens <span class="tag core">Core</span></h3>
+    <p>When only the black token remains and more damage comes, flip it. Blank means dead. Hearts mean back to life: swap in a white token plus that many Health markers. Excess damage is ignored and the current phase ends immediately. Losing the white token is final.</p></div>
+  <div class="rule"><h3>Adrenaline Rush <span class="tag core">Core</span></h3>
+    <p>+1 die on Horror Rolls while you or the Killer are down to only a Final Health token; +2 if both are.</p></div>
+  <div class="rule"><h3>Events and Special Victims <span class="tag core">Core</span></h3>
+    <p>New Events don’t cancel old ones. An Event that can’t apply is ignored, with no replacement draw. Special Victims count as normal Victims unless their card says otherwise.</p></div>
+  <div class="rule"><h3>Enemies, Killer, Minions <span class="tag core">Core</span></h3>
+    <p>“Enemy” rules cover everything hostile (Grimlash and the Children). “Killer” means Grimlash only. Children aren’t Minions, so Minion rules don’t apply to them unless their card says so.</p></div>
+  <div class="rule"><h3>Card terms <span class="tag core">Core</span></h3>
+    <p>A card discarded from a deck top isn’t resolved. A card telling you to discard itself skips everything below that line. “Removed from the game” goes back in the box; “removed from play” can return.</p></div>
+</section>
+
+<!-- QUICK -->
+<section id="quick">
+  <h2>Quick reference</h2>
+  <div class="rule"><h3>Turn at a glance</h3>
+    <div class="tw"><table>
+      <tr><th>Phase</th><th>Do</th></tr>
+      <tr><td>Action</td><td>Play cards; discard for +1 Time</td></tr>
+      <tr><td>Planning</td><td>Buy cards, reset Time to 6, return discards</td></tr>
+      <tr><td>Killer</td><td>Children (nearest Altar first), Grimlash action, Terror card</td></tr>
+      <tr><td>Panic</td><td>If any Victim died, panic Victims with Grimlash</td></tr>
+      <tr><td>Upkeep</td><td>Finale check, new Child at Altar, upkeep effects, rearrange</td></tr>
+    </table></div></div>
+  <div class="rule"><h3>Ambiguity rule</h3>
+    <p>Pick one before playing: Infinite Evil (worst for you), Abject Realism (most realistic or thematic), or Never-ending Hilarity (funniest).</p></div>
+  <div class="rule"><h3>Sources</h3>
+    <p>Official rules sheets: <a href="https://cdn.shopify.com/s/files/1/0593/6984/8897/files/FG_FF17_Grimlash_Rules.pdf?v=1752170949">Grimlash</a> and <a href="https://cdn.shopify.com/s/files/1/0593/6984/8897/files/FG_FF17_ShadyAcres_Rules.pdf?v=1752170949">Shady Acres</a> (Van Ryder Games). Children rulings from the designer on BoardGameGeek. Highlighted notes mark details to confirm on the sheet or card.</p></div>
+</section>
+</main>
+
+<main id="trackerView" hidden>
+  <div class="roundbar">
+    <button id="nextRound">Start next round</button>
+    <button id="resetGame" class="ghost">New game</button>
+  </div>
+
+  <p class="msg" id="msg" role="status"></p>
+
+  <div class="toggles">
+    <label class="tgl"><input type="checkbox" id="died"><span>A Victim died this round (any cause, sacrifices included)</span></label>
+    <label class="tgl"><input type="checkbox" id="rose"><span>Harvest Madness rose this round</span></label>
+    <label class="tgl"><input type="checkbox" id="finale"><span>Finale is revealed</span></label>
+  </div>
+
+  <!-- ACTION -->
+  <div class="ph" data-ph="a">
+    <h2>Action phase <span class="prog"></span></h2>
+    <label class="step"><input type="checkbox" data-id="a1"><span>Time is on 6 (reset last Planning phase; round 1 starts on 6).</span></label>
+    <label class="step"><input type="checkbox" data-id="a2"><span>Play an Action card. Roll dice equal to your Horror Level (+1 if you or Grimlash are on only a Final Health token, +2 if both).</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a3"><span><b class="cond">If you rolled a 3 or 4:</b> you may discard 2 Action cards to turn each one into a success.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a4"><span>Resolve the matching line (2+ successes, 1 success, or failure), left to right. Adjust Time for the card.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a5"><span><b class="cond">If you move:</b> up to 2 Victims may follow you, but never into Grimlash’s space.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a6"><span><b class="cond">If you are on a green Exit with Victims (even passing through):</b> save them, take the rewards. If your card is full, flip it for the Ultimate Ability.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a7"><span><b class="cond">If you search on an orange space:</b> draw per the card, keep 1, return the rest on top faceup or bottom facedown.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a8"><span><b class="cond">If you gain hearts:</b> choose heal <i>or</i> lower Harvest Madness, not both from one effect. Dropping a level discards that level’s card.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a9"><span><b class="cond">If you attack Grimlash:</b> remove Minor Dark Power health first. Add one weapon’s modifier if the card dealt 1+ damage.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="a10"><span><b class="cond">If an Item is gained:</b> place it in hands or backpack (you may rearrange now).</span></label>
+    <label class="step"><input type="checkbox" data-id="a11"><span>Any time this phase: discard Action cards for +1 Time each (also boosts Planning).</span></label>
+    <label class="step"><input type="checkbox" data-id="a12"><span>End the phase when you choose, run out of cards, a card ends it, or Time drops below 0 (finish the current action first; Time can’t climb back).</span></label>
+  </div>
+
+  <!-- PLANNING -->
+  <div class="ph" data-ph="p">
+    <h2>Planning phase <span class="prog"></span></h2>
+    <label class="step"><input type="checkbox" data-id="p1"><span><b>Get cards:</b> buy from the Tableau with remaining Time. Not cards played or discarded this round; not below 0 Time; hand max 10.</span></label>
+    <label class="step"><input type="checkbox" data-id="p2"><span>Take any Zero Cost cards still in the Tableau for free (even at 0 Time), within the hand limit.</span></label>
+    <label class="step"><input type="checkbox" data-id="p3"><span><b>Reset Time to 6.</b> Unspent Time is lost.</span></label>
+    <label class="step"><input type="checkbox" data-id="p4"><span>Return every card played or discarded this round to its Tableau pile.</span></label>
+  </div>
+
+  <!-- KILLER -->
+  <div class="ph" data-ph="k">
+    <h2>Killer phase <span class="prog"></span></h2>
+    <h3>A. Children (one at a time, nearest the Altar first)</h3>
+    <label class="step"><input type="checkbox" data-id="k1"><span>Child targets the closest Victim or Final Girl.</span></label>
+    <label class="step"><input type="checkbox" data-id="k2"><span>Child moves 1 space toward its target.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k3"><span><b class="cond">If the Child is in a space with a Victim:</b> roll 1 die (one attempt only, however many Victims are there).</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k4"><span><b class="cond">If you rolled 1 or 2:</b> the Child and 1 Victim go to the Altar. Victim is sacrificed: Bloodlust +1 (apply the row), Victim goes on top of the Curse deck, tick “A Victim died”.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k5"><span><b class="cond">If that was the third sacrifice:</b> draw an Ancient Curse. It stays in effect for the rest of the game.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k6"><span><b class="cond">If the Child reaches you:</b> follow the Children card.</span></label>
+    <label class="step"><input type="checkbox" data-id="k7"><span>Repeat for every Child on the board.</span></label>
+
+    <h3>B. Grimlash’s Killer Action (from the Finale card)</h3>
+    <label class="step"><input type="checkbox" data-id="k8"><span><span id="killerAct">Before Finale: target the closest Victim or Final Girl, move 1 space, attack.</span></span></label>
+    <label class="step sub"><input type="checkbox" data-id="k9"><span><b class="cond">If he attacks you:</b> you may play Reaction cards (one per attack, can stack). Otherwise lose health equal to his Attack Value.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k10"><span><b class="cond">If his attack killed a Victim:</b> Bloodlust +1 (apply the row) and Harvest Madness +1. Tick both toggles.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k11"><span><b class="cond">If Bloodlust reaches the Dark Power space:</b> reveal the Dark Power now.</span></label>
+
+    <h3>C. Terror card <span class="badge" id="terrorNote"></span></h3>
+    <label class="step"><input type="checkbox" data-id="k12"><span>Draw the top Terror card and resolve it top to bottom.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k13"><span><b class="cond">If it’s a Minor Dark Power:</b> place it above Grimlash’s board and load its Health markers.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k14"><span><b class="cond">If it shows the Event icon:</b> reveal the next Event and apply it (ignore it if it can’t apply; don’t redraw).</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k15"><span><b class="cond">If it makes the Children act:</b> run the Children steps above again as written on the card.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="k16"><span><b class="cond">If it adds Victims or raises Horror or Madness:</b> apply it and update the counters.</span></label>
+  </div>
+
+  <!-- PANIC -->
+  <div class="ph" data-ph="n">
+    <h2>Panic phase <span class="prog"></span></h2>
+    <label class="step"><input type="checkbox" data-id="n1"><span><b>Check:</b> did any Victim die this round (any cause, sacrifices included)? <span class="badge" id="panicNote"></span> <b class="cond">If no:</b> skip to Upkeep.</span></label>
+    <label class="step"><input type="checkbox" data-id="n2"><span>Find every Victim in Grimlash’s space (including any on an Overflow board for that space). Only these panic. You don’t.</span></label>
+    <label class="step"><input type="checkbox" data-id="n3"><span>Pick one of them and roll 1 die.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="n4"><span><b class="cond">If a number in the Victim’s current space matches</b> (the set at its end of the line, not the far end): move the Victim one space along that line, even into danger.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="n5"><span><b class="cond">If no path shows it:</b> the Victim stays.</span></label>
+    <label class="step sub"><input type="checkbox" data-id="n6"><span><b class="cond">If it lands on an Exit:</b> it is not saved. Only you can save Victims, in your Action phase.</span></label>
+    <label class="step"><input type="checkbox" data-id="n7"><span>Repeat for each remaining Victim in Grimlash’s space, one die each, in any order.</span></label>
+    <label class="step"><input type="checkbox" data-id="n8"><span><b class="cond">If Victims share a space with a Child:</b> check the Children card for whether they panic too.</span></label>
+  </div>
+
+  <!-- UPKEEP -->
+  <div class="ph" data-ph="u">
+    <h2>Upkeep phase <span class="prog"></span></h2>
+    <label class="step"><input type="checkbox" data-id="u1"><span><b class="cond">If the Terror deck is empty:</b> reveal the Finale (and the Dark Power if still facedown). Its new Killer Action replaces the old one; no more Terror draws.</span></label>
+    <label class="step"><input type="checkbox" data-id="u2"><span><b class="cond">If a Child is left in the supply:</b> place one on the Altar of the Old Gods.</span></label>
+    <label class="step"><input type="checkbox" data-id="u3"><span><b class="cond">If Rite of the Corrupted is revealed and Madness didn’t rise this round:</b> Harvest Madness +1. <span class="badge" id="riteNote"></span></span></label>
+    <label class="step"><input type="checkbox" data-id="u4"><span>Resolve any upkeep from Events, Items, Curses or other cards.</span></label>
+    <label class="step"><input type="checkbox" data-id="u5"><span>Optional: rearrange Items between hands and backpack (the only free time to do it).</span></label>
+    <label class="step"><input type="checkbox" data-id="u6"><span>Tap “Start next round” at the top.</span></label>
+  </div>
+
+  <div class="anytime">
+    <h2>End of round: what resets</h2>
+    <p><b class="cond">Resets:</b> Time to 6 (Planning, after buying). Played and discarded cards back to the Tableau (end of Planning; cards played in the Killer phase wait until the end of next Planning). The “Victim died” and “Madness rose” toggles. This checklist.</p>
+    <p><b class="cond">Carries over:</b> your hand (no automatic draw; new cards only from buying, Zero Cost cards and rewards), health, Horror, Bloodlust, Harvest Madness and its cards, Items, Minor Dark Powers, ongoing Events, Children on the board, the sacrifice count and every Curse.</p>
+    <p>“Start next round” clears the toggles and checkboxes for you.</p>
+  </div>
+
+  <div class="anytime">
+    <h2>Any time triggers</h2>
+    <p><b class="cond">If Harvest Madness reaches a new level:</b> draw 2 cards of that level, keep 1. With Rite of the Old One revealed, also discard the top Terror card.</p>
+    <p><b class="cond">If Harvest Madness would pass level 3:</b> you lose immediately.</p>
+    <p><b class="cond">If a Victim dies:</b> Dead space, Bloodlust +1, apply the row (at max, the final effect). Tick “A Victim died”.</p>
+    <p><b class="cond">If Horror would go past the top:</b> Bloodlust +1 instead. <b class="cond">Past the bottom:</b> +1 Time instead.</p>
+    <p><b class="cond">If a black Final Health token is flipped:</b> blank means dead; hearts mean revive with a white token plus that many health, ignore extra damage, and the current phase ends right away.</p>
+  </div>
+</main>
+
+<footer>Fan-made reference in its own words. Final Girl is by Van Ryder Games.</footer>
+
+<script>
+(function(){
+  var q=document.getElementById('q'), empty=document.getElementById('empty');
+  var rules=[].slice.call(document.querySelectorAll('.rule'));
+  var sections=[].slice.call(document.querySelectorAll('main section'));
+  q.addEventListener('input',function(){
+    var t=q.value.trim().toLowerCase(), any=false;
+    rules.forEach(function(r){
+      var hit=!t||r.textContent.toLowerCase().indexOf(t)>-1;
+      r.classList.toggle('hidden',!hit); if(hit) any=true;
+    });
+    sections.forEach(function(s){
+      var vis=s.querySelectorAll('.rule:not(.hidden)').length>0;
+      s.classList.toggle('hidden',!vis);
+    });
+    empty.style.display=any?'none':'block';
+  });
+})();
+</script>
+<script>
+(function(){
+  var KEY='rh-tracker-v1';
+  var def={tab:'rules',round:1,time:6,mad:0,sac:0,kids:1,died:false,rose:false,finale:false,checks:{}};
+  var s;
+  try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ s=null; }
+  if(!s) s=JSON.parse(JSON.stringify(def));
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} }
+  var $=function(id){return document.getElementById(id);};
+  var tabR=$('tabRules'), tabT=$('tabTracker');
+  function showTab(t){
+    s.tab=t; save();
+    tabR.setAttribute('aria-selected',t==='rules'); tabT.setAttribute('aria-selected',t==='tracker');
+    $('rulesView').hidden=t!=='rules'; $('rulesNav').hidden=t!=='rules';
+    $('trackerView').hidden=t!=='tracker';
+    window.scrollTo(0,0);
+  }
+  tabR.onclick=function(){showTab('rules');};
+  tabT.onclick=function(){showTab('tracker');};
+
+  var limits={round:[1,99],time:[-3,12],mad:[0,3],sac:[0,2],kids:[0,3]};
+  var msgEl=$('msg');
+  function say(t){ msgEl.textContent=t||''; }
+  document.querySelectorAll('.ctr button').forEach(function(b){
+    b.onclick=function(){
+      var k=b.dataset.k, d=+b.dataset.d, v=s[k]+d, lim=limits[k];
+      if(k==='mad' && d>0 && s.mad===3){ say('Harvest Madness past level 3: you lose.'); return; }
+      if(k==='sac' && d>0 && s.sac===2){ s.sac=0; say('Third sacrifice: draw an Ancient Curse. Counter reset.'); render(); return; }
+      v=Math.max(lim[0],Math.min(lim[1],v));
+      if(k==='mad' && v>s.mad){ s.rose=true; say('New level '+v+': draw 2 level '+v+' Harvest Madness cards, keep 1.'+(v===3?' One more rise and you lose.':'')); }
+      else if(k==='mad' && v<s.mad){ say('Dropped to '+v+': discard your level '+s.mad+' Harvest Madness card.'); }
+      else if(k==='time' && v<0){ say('Time below 0: the Action phase ends after this action.'); }
+      else say('');
+      s[k]=v; render();
+    };
+  });
+  ['died','rose','finale'].forEach(function(id){
+    $(id).onchange=function(){ s[id]=this.checked; render(); };
+  });
+  document.querySelectorAll('.step input').forEach(function(c){
+    c.onchange=function(){ s.checks[c.dataset.id]=c.checked; render(); };
+  });
+  $('nextRound').onclick=function(){
+    s.round=Math.min(99,s.round+1); s.time=6; s.died=false; s.rose=false; s.checks={};
+    say('New round: checklist cleared. Set Time to 6.'); render(); window.scrollTo(0,0);
+  };
+  var armed=false, rb=$('resetGame');
+  rb.onclick=function(){
+    if(!armed){ armed=true; rb.textContent='Tap again to reset'; setTimeout(function(){armed=false; rb.textContent='New game';},3000); return; }
+    var t=s.tab; s=JSON.parse(JSON.stringify(def)); s.tab=t; armed=false; rb.textContent='New game';
+    say('New game: checklist and toggles cleared.'); render();
+  };
+
+  function badge(el,on,onT,offT){ el.textContent=on?onT:offT; el.className='badge '+(on?'on':'off'); }
+  function render(){
+    $('died').checked=s.died; $('rose').checked=s.rose; $('finale').checked=s.finale;
+    document.querySelectorAll('.step input').forEach(function(c){
+      c.checked=!!s.checks[c.dataset.id]; c.closest('.step').classList.toggle('done',c.checked);
+    });
+    document.querySelectorAll('.ph').forEach(function(p){
+      var all=p.querySelectorAll('.step input'), n=0;
+      all.forEach(function(c){ if(c.checked) n++; });
+      p.querySelector('.prog').textContent=n+'/'+all.length;
+    });
+    badge($('panicNote'),s.died,'Applies this round','Skip: no deaths');
+    badge($('terrorNote'),!s.finale,'Draw','Skip: Finale revealed');
+    badge($('riteNote'),!s.rose,'Madness hasn’t risen','Already rose');
+    $('killerAct').textContent=s.finale?'After Finale: use the Killer Action on the revealed Finale card (top left).':'Before Finale: target the closest Victim or Final Girl, move 1 space, attack.';
+    save();
+  }
+  render();
+  showTab(s.tab==='tracker'?'tracker':'rules');
+})();
+</script>
+</body>
+</html>
